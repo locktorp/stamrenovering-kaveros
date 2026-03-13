@@ -223,7 +223,7 @@ return ""
 function drawToday(){
 
 let today=getTodayInfo()
-let idx=data.weeks.indexOf(today.week)
+let idx = data.weeks.findIndex((w,i)=> w===today.week && i>=currentWeekStart)
 
 if(idx<0)return
 
