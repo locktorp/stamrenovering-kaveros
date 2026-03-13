@@ -1,514 +1,105 @@
+
 <!DOCTYPE html>
 <html lang="sv">
 <head>
 <meta charset="UTF-8">
 <title>Stamrenovering Kaverös</title>
-
 <style>
-
-body{
-font-family:Inter,Arial;
-margin:0;
-background:#f4f6f8
-}
-
-header{
-background:white;
-padding:16px 24px;
-border-bottom:3px solid #111;
-font-weight:700
-}
-
-.wrapper{
-overflow:auto;
-height:calc(100vh - 60px);
-}
-
-.gantt{
-position:relative;
-min-width:3500px;
-padding:10px
-}
-
-.grid{
-display:grid;
-grid-template-columns:260px repeat(90,110px);
-}
-
-.cell{
-border-right:1px solid #d1d5db;
-border-bottom:1px solid #d1d5db;
-height:44px;
-padding:4px;
-font-size:12px;
-background:white;
-}
-
-.week{
-background:#fafafa;
-text-align:center;
-font-weight:700;
-border-bottom:3px solid #111;
-position:sticky;
-top:40px;
-z-index:10
-}
-
-.year{
-background:#f3f4f6;
-text-align:center;
-font-size:20px;
-font-weight:700;
-border-bottom:3px solid #111;
-height:40px;
-position:sticky;
-top:0;
-z-index:11
-}
-
-.addr{
-background:#e5e7eb;
-font-weight:800;
-font-size:20px;
-position:sticky;
-left:0;
-z-index:5;
-border-right:4px solid #111
-}
-
-.stam{
-font-weight:700;
-font-size:16px;
-position:sticky;
-left:0;
-background:white;
-z-index:4;
-border-right:4px solid #111
-}
-
-.task{
-background:#9ca3af;
-color:white;
-border-radius:6px;
-font-size:11px;
-padding:3px;
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer;
-height:30px;
-text-align:center;
-}
-
+body{font-family:Inter,Arial;margin:0;background:#f4f6f8}
+header{background:white;padding:16px 24px;border-bottom:3px solid #111;font-weight:700}
+.wrapper{overflow:auto;height:calc(100vh - 60px);}
+.gantt{position:relative;min-width:3500px;padding:10px}
+.grid{display:grid;grid-template-columns:260px repeat(90,110px);}
+.cell{border-right:1px solid #d1d5db;border-bottom:1px solid #d1d5db;height:44px;padding:4px;font-size:12px;background:white;}
+.week{background:#fafafa;text-align:center;font-weight:700;border-bottom:3px solid #111}
+.year{background:#f3f4f6;text-align:center;font-size:20px;font-weight:700;border-bottom:3px solid #111;height:40px}
+.addr{background:#e5e7eb;font-weight:800;font-size:18px;position:sticky;left:0;z-index:5}
+.stam{font-weight:700;font-size:14px;position:sticky;left:0;background:white;z-index:4}
+.task{background:#9ca3af;color:white;border-radius:6px;font-size:11px;padding:3px;display:flex;align-items:center;justify-content:center;cursor:pointer;height:30px;text-align:center;}
 .done{background:#10b981}
 .active{background:#f59e0b}
 .delayed{background:#ef4444}
-
 .holiday{background:#ef4444}
-
-.today-line{
-position:absolute;
-top:0;
-bottom:0;
-width:3px;
-background:red;
-z-index:6
-}
-
-svg{
-position:absolute;
-top:0;
-left:0;
-pointer-events:none
-}
-
-.popup{
-position:fixed;
-background:white;
-padding:20px;
-border-radius:10px;
-box-shadow:0 10px 25px rgba(0,0,0,.2);
-display:none;
-z-index:20
-}
-
+.today-line{position:absolute;top:0;bottom:0;width:3px;background:red;z-index:6}
+svg{position:absolute;top:0;left:0;pointer-events:none}
+.popup{position:fixed;background:white;padding:20px;border-radius:10px;box-shadow:0 10px 25px rgba(0,0,0,.2);display:none;z-index:20}
 </style>
 </head>
-
 <body>
-
 <header>Stamrenovering Kaverös</header>
-
 <div class="wrapper" id="wrap">
-
 <div class="gantt">
-
 <div id="grid" class="grid"></div>
-
 <div id="today" class="today-line"></div>
-
 <svg id="progress"></svg>
-
 </div>
-
 </div>
-
 <div id="popup" class="popup">
-
 <div id="taskTitle"></div>
-
 <br>
-
-<label>Försening</label>
-
+<label>Försenad</label>
 <select id="delay">
-
 <option value="0">0 dagar</option>
 <option value="1">1 dag</option>
 <option value="2">2 dagar</option>
 <option value="3">3 dagar</option>
 <option value="4">4 dagar</option>
 <option value="5">5 dagar</option>
-
 </select>
-
 <br><br>
-
 <button onclick="saveDelay()">Spara</button>
 <button onclick="closePopup()">Stäng</button>
-
 </div>
-
 <script>
-
-/* DIN ORIGINALDATA */
-const data = DATA_PLACEHOLDER
-
-/* LEDIGHET */
+const data = {"weeks": [33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], "sections": [{"address": "Dirigentgatn 6", "stams": [{"name": "Stam 5", "cells": ["", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 6", "cells": ["", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 7", "cells": ["", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 8", "cells": ["", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 9", "cells": ["", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 10", "cells": ["", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 11", "cells": ["", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 12", "cells": ["", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}]}, {"address": "Dirigentgatn 3", "stams": [{"name": "Stam 3", "cells": ["", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 4", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", "", "", "", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 5", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 1", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", "", "", "", "", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 2", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 6", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 7", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 8", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 9", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 10", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 11", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}]}, {"address": "Dirigentgatn 1", "stams": [{"name": "Stam 5", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 2", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 3", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 4", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 1", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 6", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 7", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "", "", "", "", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 8", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "", "", "", "", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 9", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "VS & Bygg", "VS & Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 10", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "VS & Bygg", "VS & Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 11", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "VS & Bygg", "VS & Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}]}, {"address": "Dirigentgatn 4", "stams": [{"name": "Stam 1", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 2", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 3", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 6", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 8", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 9", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 10", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 11", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Kompletering/\u00f6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 12", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Bygg", " Kakel & klinker", "", "", "", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 7", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "Flytspackling + M\u00e5lning", "", "", "", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 4", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "Bygg", "", "", "", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", "", ""]}, {"name": "Stam 5", "cells": ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "Rivning + H\u00e5ltagning", "VS-arbeten ", "Torktid", "Torktid", "Bygg", "", "", "", "Bygg", "Flytspackling + M\u00e5lning", " Kakel & klinker", "Komplettering", "\u00d6verl\u00e4mning", "", "", "", "", "", "", "", "", "", "", ""]}]}]}
 const holidayWeeks=[52,1,2,28,29,30,31,53]
-
 let tasks=[]
 let delays={}
 let selected=null
-
 function build(){
-
 const grid=document.getElementById("grid")
-
 grid.innerHTML=""
-
-tasks=[]
-
 grid.appendChild(cell(""))
-
 let year=2025
 let span=0
-
 data.weeks.forEach((w,i)=>{
-
-if(w===1 && i>0){
-
-grid.appendChild(yearCell(year,span))
-
-year++
-
-span=0
-
-}
-
+if(w===1 && i>0){grid.appendChild(yearCell(year,span));year=2026;span=0}
 span++
-
-if(i===data.weeks.length-1)
-
-grid.appendChild(yearCell(year,span))
-
+if(i===data.weeks.length-1)grid.appendChild(yearCell(year,span))
 })
-
 grid.appendChild(cell(""))
-
-data.weeks.forEach(w=>{
-
-let c=cell("v"+w)
-
-c.classList.add("week")
-
-if(holidayWeeks.includes(w))
-
-c.classList.add("holiday")
-
-grid.appendChild(c)
-
-})
-
+data.weeks.forEach(w=>{let c=cell("v"+w);c.classList.add("week");if(holidayWeeks.includes(w))c.classList.add("holiday");grid.appendChild(c)})
 data.sections.forEach(sec=>{
-
 grid.appendChild(addrCell(sec.address))
-
 data.weeks.forEach(()=>grid.appendChild(cell("")))
-
 sec.stams.forEach(st=>{
-
 grid.appendChild(stamCell(st.name))
-
 st.cells.forEach((val,i)=>{
-
 let c=cell("")
-
-if(val!=""){
-
-let id=tasks.length
-
-tasks.push({week:i,label:val})
-
-let status=getStatus(i,id)
-
-c.innerHTML=`<div class="task ${status}" onclick="openPopup(${id})">${val}</div>`
-
-}
-
-if(holidayWeeks.includes(data.weeks[i]))
-
-c.classList.add("holiday")
-
+if(val!=""){let id=tasks.length;tasks.push({week:i,label:val});let status=getStatus(i,id);c.innerHTML=`<div class="task ${status}" onclick="openPopup(${id})">${val}</div>`}
+if(holidayWeeks.includes(data.weeks[i]))c.classList.add("holiday")
 grid.appendChild(c)
-
 })
-
 })
-
 })
-
 drawToday()
-
 centerToday()
-
 drawProgress()
-
 }
-
-/* STATUS */
-
-function getStatus(weekIndex,id){
-
-let today=getTodayInfo()
-
-let week=data.weeks[weekIndex]
-
-if(delays[id]) return "delayed"
-
-if(today.week>week) return "done"
-
-if(today.week===week) return "active"
-
-return ""
-
-}
-
-/* DATUM */
-
-function getTodayInfo(){
-
-let now=new Date()
-
-let onejan=new Date(now.getFullYear(),0,1)
-
-let week=Math.ceil((((now-onejan)/86400000)+onejan.getDay()+1)/7)
-
-let day=now.getDay()
-
-return {week,day}
-
-}
-
-/* LINJE */
-
-function drawToday(){
-
-let today=getTodayInfo()
-
-let idx=data.weeks.indexOf(today.week)
-
-if(idx<0)return
-
-let x=260+(idx+today.day/7)*110
-
-document.getElementById("today").style.left=x+"px"
-
-}
-
-/* CENTER */
-
-function centerToday(){
-
-let wrap=document.getElementById("wrap")
-
-let today=getTodayInfo()
-
-let idx=data.weeks.indexOf(today.week)
-
-if(idx<0)return
-
-let x=(idx)*110
-
-wrap.scrollLeft=x-window.innerWidth/2
-
-}
-
-/* PROGRESSLINJE */
-
-function drawProgress(){
-
-let svg=document.getElementById("progress")
-
-svg.innerHTML=""
-
-let today=getTodayInfo()
-
-let idx=data.weeks.indexOf(today.week)
-
-let x=260+(idx+today.day/7)*110
-
-let path="M"+x+" 0 "
-
-tasks.forEach((t,i)=>{
-
-let y=160+i*18
-
-path+="L"+x+" "+y+" "
-
-if(delays[i]){
-
-let back=140
-
-path+="L"+(x-back)+" "+(y+6)+" "
-
-path+="L"+(x-back)+" "+(y+40)+" "
-
-path+="L"+x+" "+(y+44)+" "
-
-}
-
-})
-
-let p=document.createElementNS("http://www.w3.org/2000/svg","path")
-
-p.setAttribute("d",path)
-
-p.setAttribute("stroke","red")
-
-p.setAttribute("fill","none")
-
-p.setAttribute("stroke-width","3")
-
-svg.appendChild(p)
-
-}
-
-/* POPUP */
-
-function openPopup(i){
-
-selected=i
-
-let p=document.getElementById("popup")
-
-p.style.display="block"
-
-p.style.left="50%"
-
-p.style.top="50%"
-
-p.style.transform="translate(-50%,-50%)"
-
-document.getElementById("taskTitle").innerText=tasks[i].label
-
-}
-
-function closePopup(){
-
-document.getElementById("popup").style.display="none"
-
-}
-
-/* FÖRSENING */
-
-function saveDelay(){
-
-let d=parseInt(document.getElementById("delay").value)
-
-if(d>0)
-
-delays[selected]=d
-
-else
-
-delete delays[selected]
-
-closePopup()
-
+function cell(t){let c=document.createElement("div");c.className="cell";c.innerHTML=t;return c}
+function yearCell(y,span){let c=document.createElement("div");c.className="year";c.style.gridColumn="span "+span;c.innerText=y;return c}
+function addrCell(t){let c=cell(t);c.classList.add("addr");return c}
+function stamCell(t){let c=cell(t);c.classList.add("stam");return c}
+function getTodayInfo(){let now=new Date();let onejan=new Date(now.getFullYear(),0,1);let week=Math.ceil((((now-onejan)/86400000)+onejan.getDay()+1)/7);let day=now.getDay();return {week,day}}
+function getStatus(weekIndex,id){let today=getTodayInfo();let week=data.weeks[weekIndex];if(delays[id])return "delayed";if(today.week>week)return "done";if(today.week===week)return "active";return ""}
+function drawToday(){let today=getTodayInfo();let idx=data.weeks.indexOf(today.week);if(idx<0)return;let x=260+(idx+today.day/7)*110;document.getElementById("today").style.left=x+"px"}
+function centerToday(){let wrap=document.getElementById("wrap");let today=getTodayInfo();let idx=data.weeks.indexOf(today.week);if(idx<0)return;let x=(idx)*110;wrap.scrollLeft=x-window.innerWidth/2}
+function drawProgress(){let svg=document.getElementById("progress");svg.innerHTML="";let today=getTodayInfo();let idx=data.weeks.indexOf(today.week);let x=260+(idx+today.day/7)*110;let path="M"+x+" 0 ";tasks.forEach((t,i)=>{let y=160+i*18;path+="L"+x+" "+y+" ";if(delays[i]){let back=140;path+="L"+(x-back)+" "+(y+6)+" ";path+="L"+(x-back)+" "+(y+40)+" ";path+="L"+x+" "+(y+30)+" "}});let p=document.createElementNS("http://www.w3.org/2000/svg","path");p.setAttribute("d",path);p.setAttribute("stroke","red");p.setAttribute("fill","none");p.setAttribute("stroke-width","3");svg.appendChild(p)}
+function openPopup(i){selected=i;let p=document.getElementById("popup");p.style.display="block";p.style.left="50%";p.style.top="50%";p.style.transform="translate(-50%,-50%)";document.getElementById("taskTitle").innerText=tasks[i].label}
+function closePopup(){document.getElementById("popup").style.display="none"}
+function saveDelay(){let d=document.getElementById("delay").value;if(d==="1")delays[selected]=true;else delete delays[selected];closePopup();build()}
+setInterval(()=>{drawToday();drawProgress()},60000)
 build()
-
-}
-
-/* HELPERS */
-
-function cell(t){
-
-let c=document.createElement("div")
-
-c.className="cell"
-
-c.innerHTML=t
-
-return c
-
-}
-
-function yearCell(y,span){
-
-let c=document.createElement("div")
-
-c.className="year"
-
-c.style.gridColumn="span "+span
-
-c.innerText=y
-
-return c
-
-}
-
-function addrCell(t){
-
-let c=cell(t)
-
-c.classList.add("addr")
-
-return c
-
-}
-
-function stamCell(t){
-
-let c=cell(t)
-
-c.classList.add("stam")
-
-return c
-
-}
-
-setInterval(()=>{
-
-drawToday()
-
-drawProgress()
-
-},60000)
-
-build()
-
 </script>
-
 </body>
 </html>
