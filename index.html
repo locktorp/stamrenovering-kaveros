@@ -227,7 +227,8 @@ let idx=data.weeks.indexOf(today.week)
 
 if(idx<0)return
 
-let x=260+(idx+today.day/7)*110
+let workday = Math.min(((today.day+6)%7),4)
+let x = 260 + (idx + workday/5) * 110
 
 document.getElementById("today").style.left=x+"px"
 
@@ -247,7 +248,8 @@ let idx=data.weeks.indexOf(today.week)
 
 if(idx<0) return
 
-let x=260+(idx+today.day/7)*110
+let workday = Math.min(((today.day+6)%7),4)
+let x = 260 + (idx + workday/5) * 110
 
 let wrap=document.getElementById("wrap")
 
