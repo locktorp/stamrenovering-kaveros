@@ -184,7 +184,7 @@ let container=document.getElementById("wrap").getBoundingClientRect()
 
 let y=rect.top-container.top
 
-wrap.scrollTop = wrap.scrollTop + y - window.innerHeight/5
+wrap.scrollTop = wrap.scrollTop + y - window.innerHeight*0.4
 
 }
 function openPopup(i){selected=i;let p=document.getElementById("popup");p.style.display="block";p.style.left="50%";p.style.top="50%";p.style.transform="translate(-50%,-50%)";document.getElementById("taskTitle").innerText=tasks[i].label}
