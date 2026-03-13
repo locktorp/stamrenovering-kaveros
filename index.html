@@ -9,7 +9,7 @@ body{font-family:Inter,Arial;margin:0;background:#f4f6f8}
 header{background:white;padding:16px 24px;border-bottom:3px solid #111;font-weight:700}
 .wrapper{overflow:auto;height:calc(100vh - 60px);}
 .gantt{position:relative;min-width:3500px;padding:10px}
-grid-template-columns:180px repeat(90,110px);
+.grid{display:grid;grid-template-columns:260px repeat(90,110px);}
 .cell{border-right:1px solid #d1d5db;border-bottom:1px solid #d1d5db;height:44px;padding:4px;font-size:12px;background:white;}
 .week{
 background:#ffffff;
@@ -31,24 +31,14 @@ background:#000;
 color:white;
 font-weight:800;
 font-size:18px;
+height:28px;
 display:flex;
 align-items:center;
-padding-left:6px;
 position:sticky;
 left:0;
 z-index:5
 }
-.stam{
-font-weight:700;
-font-size:16px;
-display:flex;
-align-items:center;
-padding-left:6px;
-position:sticky;
-left:0;
-background:white;
-z-index:4
-}
+.stam{font-weight:700;font-size:18px;position:sticky;left:0;background:white;z-index:4}
 .task{background:#9ca3af;color:white;border-radius:6px;font-size:11px;padding:3px;display:flex;align-items:center;justify-content:center;cursor:pointer;height:30px;text-align:center;}
 .done{background:#10b981}
 .active{background:#f59e0b}
