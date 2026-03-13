@@ -134,33 +134,42 @@ wrap.scrollLeft = x - window.innerWidth/2
 }
 function centerToday(){let wrap=document.getElementById("wrap");let today=getTodayInfo();let idx=data.weeks.indexOf(today.week);if(idx<0)return;let x=(idx)*110;wrap.scrollLeft=x-window.innerWidth/2}
 function drawProgress(){let svg=document.getElementById("progress");svg.innerHTML="";let today=getTodayInfo();let idx=data.weeks.indexOf(today.week);let x=260+(idx+today.day/7)*110;let path="M"+x+" 0 ";tasks.forEach((t,i)=>{let y=160+i*44;path+="L"+x+" "+y+" ";if(delays[i]){let back=180;path+="L"+(x-back)+" "+(y+6)+" ";path+="L"+(x-back)+" "+(y+55)+" ";path+="L"+x+" "+(y+44)+" "}});let p=document.createElementNS("http://www.w3.org/2000/svg","path");p.setAttribute("d",path);p.setAttribute("stroke","red");p.setAttribute("fill","none");p.setAttribute("stroke-width","3");svg.appendChild(p)}
-function centerLatestActivity(){
+function centerOnToday(){
 
 let today=getTodayInfo()
 let idx=data.weeks.indexOf(today.week)
 
-let closest=null
-let closestDist=999
+if(idx<0) return
+
+let x=260+(idx+today.day/7)*110
+
+let wrap=document.getElementById("wrap")
+
+/* vågrät centrering */
+
+wrap.scrollLeft = x - window.innerWidth/2
+
+/* hitta aktiviteter runt linjen */
+
+let rows=[]
 
 tasks.forEach((t,i)=>{
 
-let dist=Math.abs(t.week-idx)
-
-if(dist<closestDist){
-closestDist=dist
-closest=i
+if(Math.abs(t.week-idx)<=1){
+rows.push(i)
 }
 
 })
 
-if(closest===null) return
+if(rows.length===0) return
 
-let rowHeight=44
-let y=160+closest*rowHeight
+let middle=rows[Math.floor(rows.length/2)]
 
-let wrap=document.getElementById("wrap")
+let y=160 + middle*44
 
-wrap.scrollTop=y-window.innerHeight/2
+/* lodrät centrering */
+
+wrap.scrollTop = y - window.innerHeight/2
 
 }
 function openPopup(i){selected=i;let p=document.getElementById("popup");p.style.display="block";p.style.left="50%";p.style.top="50%";p.style.transform="translate(-50%,-50%)";document.getElementById("taskTitle").innerText=tasks[i].label}
@@ -177,9 +186,14 @@ delete delays[selected]
 
 closePopup()
 build()
+centerOnToday()
 
 }
-setInterval(()=>{drawToday();drawProgress()},60000)
+setInterval(()=>{
+drawToday()
+drawProgress()
+centerOnToday()
+},60000)
 build()
 </script>
 </body>
