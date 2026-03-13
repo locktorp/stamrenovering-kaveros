@@ -132,7 +132,20 @@ wrap.scrollTop=(160+latest*18)-300
 } 
 function openPopup(i){selected=i;let p=document.getElementById("popup");p.style.display="block";p.style.left="50%";p.style.top="50%";p.style.transform="translate(-50%,-50%)";document.getElementById("taskTitle").innerText=tasks[i].label}
 function closePopup(){document.getElementById("popup").style.display="none"}
-function saveDelay(){let d=document.getElementById("delay").value;if(d==="1")delays[selected]=true;else delete delays[selected];closePopup();build()}
+function saveDelay(){
+
+let d=parseInt(document.getElementById("delay").value)
+
+if(d>0){
+delays[selected]=d
+}else{
+delete delays[selected]
+}
+
+closePopup()
+build()
+
+}
 setInterval(()=>{drawToday();drawProgress()},60000)
 build()
 </script>
