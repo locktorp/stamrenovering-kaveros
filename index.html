@@ -136,18 +136,25 @@ function centerToday(){let wrap=document.getElementById("wrap");let today=getTod
 function drawProgress(){let svg=document.getElementById("progress");svg.innerHTML="";let today=getTodayInfo();let idx=data.weeks.indexOf(today.week);let x=260+(idx+today.day/7)*110;let path="M"+x+" 0 ";tasks.forEach((t,i)=>{let y=160+i*18;path+="L"+x+" "+y+" ";if(delays[i]){let back=180;path+="L"+(x-back)+" "+(y+6)+" ";path+="L"+(x-back)+" "+(y+55)+" ";path+="L"+x+" "+(y+30)+" "}});let p=document.createElementNS("http://www.w3.org/2000/svg","path");p.setAttribute("d",path);p.setAttribute("stroke","red");p.setAttribute("fill","none");p.setAttribute("stroke-width","3");svg.appendChild(p)}
 function centerLatestActivity(){
 
-let latest=0
+let today=getTodayInfo()
+let idx=data.weeks.indexOf(today.week)
+
+let rows=[]
 
 tasks.forEach((t,i)=>{
-if(t.week>latest) latest=i
+if(t.week===idx) rows.push(i)
 })
+
+if(rows.length===0) return
+
+let middle=rows[Math.floor(rows.length/2)]
+
+let rowHeight=44
+let y=160+middle*rowHeight
 
 let wrap=document.getElementById("wrap")
 
-let rowHeight = 44
-let y = 160 + latest * rowHeight
-
-wrap.scrollTop = y - window.innerHeight / 2
+wrap.scrollTop=y-window.innerHeight/2
 
 }
 function openPopup(i){selected=i;let p=document.getElementById("popup");p.style.display="block";p.style.left="50%";p.style.top="50%";p.style.transform="translate(-50%,-50%)";document.getElementById("taskTitle").innerText=tasks[i].label}
