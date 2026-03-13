@@ -182,7 +182,24 @@ function cell(t){let c=document.createElement("div");c.className="cell";c.innerH
 function yearCell(y,span){let c=document.createElement("div");c.className="year";c.style.gridColumn="span "+span;c.innerText=y;return c}
 function addrCell(t){let c=cell(t);c.classList.add("addr");return c}
 function stamCell(t){let c=cell(t);c.classList.add("stam");return c}
-function getTodayInfo(){let now=new Date();let onejan=new Date(now.getFullYear(),0,1);let week=Math.ceil((((now-onejan)/86400000)+onejan.getDay()+1)/7);let day=now.getDay();return {week,day}}
+function getTodayInfo(){
+
+let now = new Date()
+
+let date = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()))
+let dayNum = date.getUTCDay() || 7
+
+date.setUTCDate(date.getUTCDate() + 4 - dayNum)
+
+let yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1))
+
+let week = Math.ceil((((date - yearStart) / 86400000) + 1) / 7)
+
+let day = now.getDay()
+
+return {week,day}
+
+}
 function getStatus(weekIndex,id){
 
 let today=getTodayInfo()
