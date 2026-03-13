@@ -20,6 +20,7 @@ header{background:white;padding:16px 24px;border-bottom:3px solid #111;font-weig
 .active{background:#f59e0b}
 .delayed{background:#ef4444}
 .holiday{background:#ef4444}
+.addrrow{background:#e5e7eb;}
 .today-line{position:absolute;top:0;bottom:0;width:3px;background:red;z-index:6}
 svg{position:absolute;top:0;left:0;pointer-events:none}
 .popup{position:fixed;background:white;padding:20px;border-radius:10px;box-shadow:0 10px 25px rgba(0,0,0,.2);display:none;z-index:20}
@@ -74,7 +75,12 @@ grid.appendChild(cell(""))
 data.weeks.forEach(w=>{let c=cell("v"+w);c.classList.add("week");if(holidayWeeks.includes(w))c.classList.add("holiday");grid.appendChild(c)})
 data.sections.forEach(sec=>{
 grid.appendChild(addrCell(sec.address))
-data.weeks.forEach(()=>grid.appendChild(cell("")))
+
+data.weeks.forEach(()=>{
+let c = cell("")
+c.classList.add("addrrow")
+grid.appendChild(c)
+})
 sec.stams.forEach(st=>{
 grid.appendChild(stamCell(st.name))
 st.cells.forEach((val,i)=>{
