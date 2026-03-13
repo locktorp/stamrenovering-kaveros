@@ -57,6 +57,9 @@ let tasks=[]
 let delays={}
 let selected=null
 function build(){
+
+tasks=[]
+  
 const grid=document.getElementById("grid")
 grid.innerHTML=""
 grid.appendChild(cell(""))
@@ -149,27 +152,33 @@ let wrap=document.getElementById("wrap")
 
 wrap.scrollLeft = x - window.innerWidth/2
 
-/* hitta aktiviteter runt linjen */
+/* hitta aktivitet i denna vecka */
 
-let rows=[]
+let tasksDOM=document.querySelectorAll(".task")
 
-tasks.forEach((t,i)=>{
+let middleTask=null
 
-if(Math.abs(t.week-idx)<=1){
-rows.push(i)
+tasksDOM.forEach(t=>{
+
+let rect=t.getBoundingClientRect()
+let container=document.getElementById("wrap").getBoundingClientRect()
+
+let y=rect.top-container.top
+
+if(y>0 && y<window.innerHeight){
+middleTask=t
 }
 
 })
 
-if(rows.length===0) return
+if(!middleTask) return
 
-let middle=rows[Math.floor(rows.length/2)]
+let rect=middleTask.getBoundingClientRect()
+let container=document.getElementById("wrap").getBoundingClientRect()
 
-let y=160 + middle*44
+let y=rect.top-container.top
 
-/* lodrät centrering */
-
-wrap.scrollTop = y - window.innerHeight/3
+wrap.scrollTop += y - window.innerHeight/2
 
 }
 function openPopup(i){selected=i;let p=document.getElementById("popup");p.style.display="block";p.style.left="50%";p.style.top="50%";p.style.transform="translate(-50%,-50%)";document.getElementById("taskTitle").innerText=tasks[i].label}
@@ -195,6 +204,7 @@ drawProgress()
 centerOnToday()
 },60000)
 build()
+  
 </script>
 </body>
 </html>
