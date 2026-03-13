@@ -68,10 +68,38 @@ background:#000;
 .today-line{position:absolute;top:0;bottom:0;width:3px;background:red;z-index:6}
 svg{position:absolute;top:0;left:0;pointer-events:none}
 .popup{position:fixed;background:white;padding:20px;border-radius:10px;box-shadow:0 10px 25px rgba(0,0,0,.2);display:none;z-index:20}
+
+.ticker{
+position:relative;
+overflow:hidden;
+white-space:nowrap;
+background:#111;
+color:white;
+height:30px;
+display:flex;
+align-items:center;
+font-weight:600;
+}
+
+.ticker::after{
+content:"Information om projektet – Stamrenovering Kaverös pågår";
+position:absolute;
+white-space:nowrap;
+animation:scrollText 20s linear infinite;
+}
+
+@keyframes scrollText{
+from{transform:translateX(-100%);}
+to{transform:translateX(100%);}
+}
+  
 </style>
 </head>
 <body>
 <header>Stamrenovering Kaverös</header>
+
+<div class="ticker">Information om projektet – Stamrenovering Kaverös pågår</div>
+  
 <div class="wrapper" id="wrap">
 <div class="gantt">
 <div id="grid" class="grid"></div>
