@@ -71,7 +71,11 @@ grid.appendChild(cell(""))
 data.weeks.forEach(w=>{let c=cell("v"+w);c.classList.add("week");if(holidayWeeks.includes(w))c.classList.add("holiday");grid.appendChild(c)})
 data.sections.forEach(sec=>{
 grid.appendChild(addrCell(sec.address))
-data.weeks.forEach(()=>grid.appendChild(cell("")))
+data.weeks.forEach((w,i)=>{
+let c=cell("")
+if(isHoliday(i)) c.classList.add("holiday")
+grid.appendChild(c)
+})
 sec.stams.forEach(st=>{
 grid.appendChild(stamCell(st.name))
 st.cells.forEach((val,i)=>{
