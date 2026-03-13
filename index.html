@@ -14,14 +14,15 @@ background:#f4f6f8;
 
 header{
 padding:12px 20px;
-font-weight:bold;
 border-bottom:3px solid black;
 background:white;
+font-weight:bold;
 }
 
 .wrapper{
 height:calc(100vh - 50px);
 overflow:auto;
+position:relative;
 }
 
 .grid{
@@ -32,8 +33,8 @@ grid-auto-rows:44px;
 .cell{
 border-right:1px solid #d1d5db;
 border-bottom:1px solid #d1d5db;
-padding:4px;
 background:white;
+padding:4px;
 font-size:12px;
 }
 
@@ -122,26 +123,38 @@ z-index:20;
 <header>Stamrenovering Kaverös</header>
 
 <div class="wrapper" id="wrap">
+
 <div id="grid" class="grid"></div>
 <div id="today" class="today"></div>
+
 </div>
 
 <div id="popup" class="popup">
+
 <div id="title"></div>
+
 <br>
+
 Försenad (dagar)
+
 <br>
+
 <select id="delay">
+
 <option>0</option>
 <option>1</option>
 <option>2</option>
 <option>3</option>
 <option>4</option>
 <option>5</option>
+
 </select>
+
 <br><br>
+
 <button onclick="saveDelay()">Spara</button>
 <button onclick="closePopup()">Stäng</button>
+
 </div>
 
 <script>
@@ -156,14 +169,6 @@ const weeks=[
 
 const holidayWeeks=[52,1,2,28,29,30,31,53]
 
-const rows=[
-{addr:"Dirigentgatan 6",stams:["Stam 5","Stam 6","Stam 7","Stam 8","Stam 9","Stam 10","Stam 11","Stam 12"]},
-{addr:"Dirigentgatan 3",stams:["Stam 3","Stam 4","Stam 5","Stam 1","Stam 2","Stam 6","Stam 7","Stam 8","Stam 9","Stam 10","Stam 11"]},
-{addr:"Dirigentgatan 1",stams:["Stam 1","Stam 2","Stam 3","Stam 4"]}
-]
-
-const activities=["Rivning","VS","Torktid","Bygg","Flytspackling","Kakel","Komplettering","Överlämning"]
-
 let tasks=[]
 let delays={}
 let selected=null
@@ -171,10 +176,13 @@ let selected=null
 function isoWeek(date){
 
 let d=new Date(date)
+
 d.setHours(0,0,0,0)
+
 d.setDate(d.getDate()+4-(d.getDay()||7))
 
 let yearStart=new Date(d.getFullYear(),0,1)
+
 return Math.ceil((((d-yearStart)/86400000)+1)/7)
 
 }
@@ -182,6 +190,7 @@ return Math.ceil((((d-yearStart)/86400000)+1)/7)
 function todayInfo(){
 
 let n=new Date()
+
 return {week:isoWeek(n),day:n.getDay()}
 
 }
@@ -189,27 +198,35 @@ return {week:isoWeek(n),day:n.getDay()}
 function build(){
 
 tasks=[]
+
 const grid=document.getElementById("grid")
 
 grid.style.gridTemplateColumns="260px repeat("+weeks.length+",110px)"
+
 grid.innerHTML=""
 
 grid.appendChild(cell(""))
 
 let year=2025
+
 let span=0
 
 weeks.forEach((w,i)=>{
 
 if(w===1 && i>0){
+
 grid.appendChild(yearCell(year,span))
+
 year++
+
 span=0
+
 }
 
 span++
 
 if(i===weeks.length-1)
+
 grid.appendChild(yearCell(year,span))
 
 })
@@ -219,51 +236,45 @@ grid.appendChild(cell(""))
 weeks.forEach(w=>{
 
 let c=cell("v"+w)
+
 c.classList.add("week")
 
 if(holidayWeeks.includes(w))
+
 c.classList.add("holiday")
 
 grid.appendChild(c)
 
 })
 
-rows.forEach(r=>{
+for(let r=0;r<30;r++){
 
-grid.appendChild(addrCell(r.addr))
-weeks.forEach(()=>grid.appendChild(cell("")))
-
-r.stams.forEach(s=>{
-
-grid.appendChild(stamCell(s))
+grid.appendChild(stamCell("Stam "+(r+1)))
 
 weeks.forEach((w,i)=>{
 
 let c=cell("")
 
-if(Math.random()<0.1){
+if(Math.random()<0.08){
 
 let id=tasks.length
+
 tasks.push({week:w})
 
 let status=getStatus(w,id)
 
-c.innerHTML='<div class="task '+status+'" onclick="openPopup('+id+')">'+activities[Math.floor(Math.random()*activities.length)]+'</div>'
+c.innerHTML='<div class="task '+status+'" onclick="openPopup('+id+')">Aktivitet</div>'
 
 }
-
-if(holidayWeeks.includes(w))
-c.classList.add("holiday")
 
 grid.appendChild(c)
 
 })
 
-})
-
-})
+}
 
 drawToday()
+
 centerToday()
 
 }
@@ -285,6 +296,7 @@ return ""
 function drawToday(){
 
 let t=todayInfo()
+
 let idx=weeks.indexOf(t.week)
 
 if(idx<0)return
@@ -298,7 +310,9 @@ document.getElementById("today").style.left=x+"px"
 function centerToday(){
 
 let wrap=document.getElementById("wrap")
+
 let t=todayInfo()
+
 let idx=weeks.indexOf(t.week)
 
 wrap.scrollLeft=(idx*110)-window.innerWidth/2
@@ -308,8 +322,11 @@ wrap.scrollLeft=(idx*110)-window.innerWidth/2
 function cell(t){
 
 let c=document.createElement("div")
+
 c.className="cell"
+
 c.innerHTML=t
+
 return c
 
 }
@@ -317,17 +334,13 @@ return c
 function yearCell(y,span){
 
 let c=document.createElement("div")
+
 c.className="year"
+
 c.style.gridColumn="span "+span
+
 c.innerText=y
-return c
 
-}
-
-function addrCell(t){
-
-let c=cell(t)
-c.classList.add("addr")
 return c
 
 }
@@ -335,7 +348,9 @@ return c
 function stamCell(t){
 
 let c=cell(t)
+
 c.classList.add("stam")
+
 return c
 
 }
@@ -347,8 +362,11 @@ selected=i
 let p=document.getElementById("popup")
 
 p.style.display="block"
+
 p.style.left="50%"
+
 p.style.top="50%"
+
 p.style.transform="translate(-50%,-50%)"
 
 document.getElementById("title").innerText="Aktivitet"
@@ -366,11 +384,15 @@ function saveDelay(){
 let d=parseInt(document.getElementById("delay").value)
 
 if(d>0)
+
 delays[selected]=d
+
 else
+
 delete delays[selected]
 
 closePopup()
+
 build()
 
 }
