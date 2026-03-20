@@ -224,7 +224,6 @@ function drawToday(){
 
 let today=getTodayInfo()
 let idx=data.weeks.indexOf(today.week)
-if(idx < 0) idx = data.weeks.indexOf(today.week % 53)
 
 if(idx<0)return
 
@@ -240,7 +239,7 @@ let wrap=document.getElementById("wrap")
 wrap.scrollLeft = x - window.innerWidth/2
 
 }
-function centerToday(){let wrap=document.getElementById("wrap");let today=getTodayInfo();let idx=data.weeks.indexOf(today.week)if(idx < 0) idx = data.weeks.indexOf(today.week % 53);if(idx<0)return;let x=(idx)*110;wrap.scrollLeft=x-window.innerWidth/2}
+function centerToday(){let wrap=document.getElementById("wrap");let today=getTodayInfo();let idx=data.weeks.indexOf(today.week);if(idx<0)return;let x=(idx)*110;wrap.scrollLeft=x-window.innerWidth/2}
 function drawProgress(){let svg=document.getElementById("progress");svg.innerHTML="";let today=getTodayInfo();let idx=data.weeks.indexOf(today.week);let x=260+(idx+today.day/7)*110;let path="M"+x+" 0 ";tasks.forEach((t,i)=>{let y=160+i*44;path+="L"+x+" "+y+" ";if(delays[i]){let back=180;path+="L"+(x-back)+" "+(y+6)+" ";path+="L"+(x-back)+" "+(y+55)+" ";path+="L"+x+" "+(y+44)+" "}});let p=document.createElementNS("http://www.w3.org/2000/svg","path");p.setAttribute("d",path);p.setAttribute("stroke","red");p.setAttribute("fill","none");p.setAttribute("stroke-width","3");svg.appendChild(p)}
 function centerOnToday(){
 
