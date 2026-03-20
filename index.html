@@ -147,10 +147,24 @@ border-radius:4px;
 font-weight:700;
 white-space:nowrap;
 }
+
+.bg-logo{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%, -50%);
+width:900px;              /* ändra storlek här */
+opacity:0.05;             /* genomskinlighet */
+z-index:0;                /* bakom allt */
+pointer-events:none;      /* går att klicka igenom */
+}
   
 </style>
 </head>
 <body>
+
+<img src="Skanska_logo.svg.png" class="bg-logo">  
+  
 <header>
 <img src="Skanska_logo.svg.png" class="logo">
 <span>TIDPLAN - STAMRENOVERING KAVERÖS</span>
