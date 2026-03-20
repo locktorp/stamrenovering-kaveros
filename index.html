@@ -308,47 +308,6 @@ let wrap=document.getElementById("wrap")
 
 wrap.scrollLeft = x - window.innerWidth/2
 
-// 🔥 hitta pågående aktivitet (active)
-let tasksDOM = document.querySelectorAll(".task.active")
-
-let lowest = 0
-let found = false
-
-tasksDOM.forEach(t=>{
-let rect = t.getBoundingClientRect()
-let container = document.getElementById("wrap").getBoundingClientRect()
-
-let y = rect.top - container.top
-
-if(y > lowest){
-lowest = y
-found = true
-}
-})
-
-if(!found){
-tasksDOM = document.querySelectorAll(".task")
-
-tasksDOM.forEach(t=>{
-let rect = t.getBoundingClientRect()
-let container = document.getElementById("wrap").getBoundingClientRect()
-
-let y = rect.top - container.top
-
-if(y > lowest){
-lowest = y
-}
-})
-}
-
-let label = document.querySelector(".today-text")
-
-if(label){
-label.style.top = (lowest - 30) + "px"
-}
-
-}
-  
 }
 function centerToday(){let wrap=document.getElementById("wrap");let today=getTodayInfo();let idx = data.weeks.findIndex((w,i)=>{
 return w===today.week && getWeekYear(i)===today.year
