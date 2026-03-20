@@ -204,7 +204,7 @@ date.setUTCDate(date.getUTCDate() + 4 - dayNum)
 
 let yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1))
 
-let week = Math.ceil((((date - yearStart) / 86400000) + 1) / 7)
+let week = Math.ceil((((date - yearStart) / 86400000) + 1) / 7) - 1
 
 let day = now.getDay()
 
