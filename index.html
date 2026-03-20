@@ -340,7 +340,40 @@ if(label){
 label.style.top = (lowest - 25) + "px"
 }
 }
-  
+// 🔥 hitta aktiviteter i dagens kolumn
+let tasksDOM = document.querySelectorAll(".task")
+
+let lowest = null
+
+tasksDOM.forEach(t=>{
+
+let cell = t.parentElement
+let col = cell.cellIndex
+
+// jämför med dagens kolumn
+if(col === idx + 1){   // +1 pga första kolumnen (stam)
+
+let rect = t.getBoundingClientRect()
+let container = document.getElementById("wrap").getBoundingClientRect()
+
+let y = rect.top - container.top
+
+if(lowest === null || y > lowest){
+lowest = y
+}
+
+}
+
+})
+
+// flytta IDAG
+if(lowest !== null){
+let label = document.querySelector(".today-text")
+
+if(label){
+label.style.top = (lowest - 25) + "px"
+}
+}  
 }
 function centerToday(){let wrap=document.getElementById("wrap");let today=getTodayInfo();let idx = data.weeks.findIndex((w,i)=>{
 return w===today.week && getWeekYear(i)===today.year
