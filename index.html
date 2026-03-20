@@ -53,14 +53,16 @@ background:#f3f4f6;
 font-size:20px;
 font-weight:700;
 border-bottom:3px solid #111;
-height:40px;
-position:sticky;
-top:0;
-z-index:9;
 
-display:flex;              /* 🔥 viktigt */
-align-items:center;        /* centrerar vertikalt */
-justify-content:center;    /* centrerar horisontellt */
+position:sticky;
+top:0;                 /* 🔥 alltid längst upp */
+z-index:100;           /* 🔥 över allt annat */
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+height:40px;
 }
 .addr{
 background:#143275;
