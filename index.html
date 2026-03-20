@@ -186,6 +186,16 @@ function getTodayInfo(){
 
 let now = new Date()
 
+function getWeekYear(index){
+let year = 2025
+
+for(let i=0;i<=index;i++){
+  if(data.weeks[i]===1 && i>0) year++
+}
+
+return year
+}
+
 let date = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()))
 let dayNum = date.getUTCDay() || 7
 
@@ -197,7 +207,7 @@ let week = Math.ceil((((date - yearStart) / 86400000) + 1) / 7)
 
 let day = now.getDay()
 
-return {week,day}
+return {week,day,year: now.getFullYear()}
 
 }
 function getStatus(weekIndex,id){
@@ -223,7 +233,9 @@ return ""
 function drawToday(){
 
 let today=getTodayInfo()
-let idx=data.weeks.indexOf(today.week)
+let idx = data.weeks.findIndex((w,i)=>{
+return w===today.week && getWeekYear(i)===today.year
+})
 
 if(idx<0)return
 
@@ -239,12 +251,18 @@ let wrap=document.getElementById("wrap")
 wrap.scrollLeft = x - window.innerWidth/2
 
 }
-function centerToday(){let wrap=document.getElementById("wrap");let today=getTodayInfo();let idx=data.weeks.indexOf(today.week);if(idx<0)return;let x=(idx)*110;wrap.scrollLeft=x-window.innerWidth/2}
-function drawProgress(){let svg=document.getElementById("progress");svg.innerHTML="";let today=getTodayInfo();let idx=data.weeks.indexOf(today.week);let x=260+(idx+today.day/7)*110;let path="M"+x+" 0 ";tasks.forEach((t,i)=>{let y=160+i*44;path+="L"+x+" "+y+" ";if(delays[i]){let back=180;path+="L"+(x-back)+" "+(y+6)+" ";path+="L"+(x-back)+" "+(y+55)+" ";path+="L"+x+" "+(y+44)+" "}});let p=document.createElementNS("http://www.w3.org/2000/svg","path");p.setAttribute("d",path);p.setAttribute("stroke","red");p.setAttribute("fill","none");p.setAttribute("stroke-width","3");svg.appendChild(p)}
+function centerToday(){let wrap=document.getElementById("wrap");let today=getTodayInfo();let idx = data.weeks.findIndex((w,i)=>{
+return w===today.week && getWeekYear(i)===today.year
+});if(idx<0)return;let x=(idx)*110;wrap.scrollLeft=x-window.innerWidth/2}
+function drawProgress(){let svg=document.getElementById("progress");svg.innerHTML="";let today=getTodayInfo();let idx = data.weeks.findIndex((w,i)=>{
+  return w===today.week && getWeekYear(i)===today.year
+});let x=260+(idx+today.day/7)*110;let path="M"+x+" 0 ";tasks.forEach((t,i)=>{let y=160+i*44;path+="L"+x+" "+y+" ";if(delays[i]){let back=180;path+="L"+(x-back)+" "+(y+6)+" ";path+="L"+(x-back)+" "+(y+55)+" ";path+="L"+x+" "+(y+44)+" "}});let p=document.createElementNS("http://www.w3.org/2000/svg","path");p.setAttribute("d",path);p.setAttribute("stroke","red");p.setAttribute("fill","none");p.setAttribute("stroke-width","3");svg.appendChild(p)}
 function centerOnToday(){
 
 let today=getTodayInfo()
-let idx=data.weeks.indexOf(today.week)
+let idx = data.weeks.findIndex((w,i)=>{
+  return w===today.week && getWeekYear(i)===today.year
+})
 
 if(idx<0) return
 
