@@ -179,6 +179,7 @@ if(w===1 && i>0){grid.appendChild(yearCell(year,span));year++;span=0}
 span++
 if(i===data.weeks.length-1)grid.appendChild(yearCell(year,span))
 })
+grid.appendChild(cell(""))
 data.weeks.forEach(w=>{let c=cell("v"+w);c.classList.add("week");if(holidayWeeks.includes(w))c.classList.add("holiday");grid.appendChild(c)})
 data.sections.forEach(sec=>{
 grid.appendChild(addrCell(sec.address))
