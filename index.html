@@ -168,77 +168,37 @@ let selected=null
 function build(){
 
 tasks=[]
-
+  
 const grid=document.getElementById("grid")
 grid.innerHTML=""
-
-/* första tomma cellen (VIKTIG – behåll!) */
 grid.appendChild(cell(""))
-
-/* ÅR */
 let year=2025
 let span=0
-
 data.weeks.forEach((w,i)=>{
-if(w===1 && i>0){
-grid.appendChild(yearCell(year,span))
-year++
-span=0
-}
+if(w===1 && i>0){grid.appendChild(yearCell(year,span));year++;span=0}
 span++
-if(i===data.weeks.length-1){
-grid.appendChild(yearCell(year,span))
-}
+if(i===data.weeks.length-1)grid.appendChild(yearCell(year,span))
 })
-
-/* ❌ HÄR TOG VI BORT EXTRA TOM RAD */
-
-/* VECKOR */
-data.weeks.forEach(w=>{
-let c=cell("v"+w)
-c.classList.add("week")
-if(holidayWeeks.includes(w)) c.classList.add("holiday")
-grid.appendChild(c)
-})
-
-/* DATA */
+grid.appendChild(cell(""))
+data.weeks.forEach(w=>{let c=cell("v"+w);c.classList.add("week");if(holidayWeeks.includes(w))c.classList.add("holiday");grid.appendChild(c)})
 data.sections.forEach(sec=>{
-
-/* adress */
 grid.appendChild(addrCell(sec.address))
 
-/* svart rad */
 data.weeks.forEach(()=>{
-let c=cell("")
+let c = cell("")
 c.classList.add("addrrow")
 grid.appendChild(c)
 })
-
-/* stammar */
 sec.stams.forEach(st=>{
 grid.appendChild(stamCell(st.name))
-
 st.cells.forEach((val,i)=>{
 let c=cell("")
-
-if(val!=""){
-let id=tasks.length
-tasks.push({week:i,label:val})
-
-let status=getStatus(i,id)
-
-c.innerHTML=`<div class="task ${status}" onclick="openPopup(${id})">${val}</div>`
-}
-
-if(holidayWeeks.includes(data.weeks[i])) c.classList.add("holiday")
-
+if(val!=""){let id=tasks.length;tasks.push({week:i,label:val});let status=getStatus(i,id);c.innerHTML=`<div class="task ${status}" onclick="openPopup(${id})">${val}</div>`}
+if(holidayWeeks.includes(data.weeks[i]))c.classList.add("holiday")
 grid.appendChild(c)
 })
-
 })
-
 })
-
 drawToday()
 centerToday()
 drawProgress()
