@@ -182,7 +182,6 @@ function cell(t){let c=document.createElement("div");c.className="cell";c.innerH
 function yearCell(y,span){let c=document.createElement("div");c.className="year";c.style.gridColumn="span "+span;c.innerText=y;return c}
 function addrCell(t){let c=cell(t);c.classList.add("addr");return c}
 function stamCell(t){let c=cell(t);c.classList.add("stam");return c}
-function getTodayInfo(){
 
 function getWeekYear(index){
 let year = 2025
@@ -193,6 +192,8 @@ for(let i=0;i<=index;i++){
 
 return year
 }
+  
+function getTodayInfo(){
 
 let now = new Date()
 
@@ -256,7 +257,8 @@ return w===today.week && getWeekYear(i)===today.year
 });if(idx<0)return;let x=(idx)*110;wrap.scrollLeft=x-window.innerWidth/2}
 function drawProgress(){let svg=document.getElementById("progress");svg.innerHTML="";let today=getTodayInfo();let idx = data.weeks.findIndex((w,i)=>{
 return w===today.week && getWeekYear(i)===today.year
-});let x=260+(idx+today.day/7)*110;let path="M"+x+" 0 ";tasks.forEach((t,i)=>{let y=160+i*44;path+="L"+x+" "+y+" ";if(delays[i]){let back=180;path+="L"+(x-back)+" "+(y+6)+" ";path+="L"+(x-back)+" "+(y+55)+" ";path+="L"+x+" "+(y+44)+" "}});let p=document.createElementNS("http://www.w3.org/2000/svg","path");p.setAttribute("d",path);p.setAttribute("stroke","red");p.setAttribute("fill","none");p.setAttribute("stroke-width","3");svg.appendChild(p)}
+});let workday = Math.min(((today.day+6)%7),4)
+let x = 200 + (idx + workday/5) * 110;let path="M"+x+" 0 ";tasks.forEach((t,i)=>{let y=160+i*44;path+="L"+x+" "+y+" ";if(delays[i]){let back=180;path+="L"+(x-back)+" "+(y+6)+" ";path+="L"+(x-back)+" "+(y+55)+" ";path+="L"+x+" "+(y+44)+" "}});let p=document.createElementNS("http://www.w3.org/2000/svg","path");p.setAttribute("d",path);p.setAttribute("stroke","red");p.setAttribute("fill","none");p.setAttribute("stroke-width","3");svg.appendChild(p)}
 function centerOnToday(){
 
 let today=getTodayInfo()
