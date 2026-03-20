@@ -308,28 +308,36 @@ let wrap=document.getElementById("wrap")
 
 wrap.scrollLeft = x - window.innerWidth/2
 
-// 🔥 hitta pågående aktivitet (active)
-let tasksDOM = document.querySelectorAll(".task.active")
+// 🔥 hitta aktiviteter nära dagens linje
+let todayLine = document.getElementById("today")
+let lineX = todayLine.getBoundingClientRect().left
+
+let tasksDOM = document.querySelectorAll(".task")
 
 let lowest = null
 
 tasksDOM.forEach(t=>{
 let rect = t.getBoundingClientRect()
-let container = document.getElementById("wrap").getBoundingClientRect()
 
+// om aktiviteten ligger nära linjen (±60px)
+if(Math.abs(rect.left - lineX) < 60){
+
+let container = document.getElementById("wrap").getBoundingClientRect()
 let y = rect.top - container.top
 
 if(lowest === null || y > lowest){
 lowest = y
 }
+
+}
 })
 
-// flytta bara om vi hittade något
+// flytta IDAG
 if(lowest !== null){
 let label = document.querySelector(".today-text")
 
 if(label){
-label.style.top = (lowest - 30) + "px"
+label.style.top = (lowest - 25) + "px"
 }
 }
   
