@@ -174,6 +174,17 @@ opacity:0.2;             /* genomskinlighet */
 z-index:0;                /* bakom allt */
 pointer-events:none;      /* går att klicka igenom */
 }
+
+.blink{
+color:#ef4444;
+animation:blink 1s infinite;
+}
+
+@keyframes blink{
+0%{opacity:1;}
+50%{opacity:0.2;}
+100%{opacity:1;}
+}
   
 </style>
 </head>
@@ -251,7 +262,29 @@ c.classList.add("addrrow")
 grid.appendChild(c)
 })
 sec.stams.forEach(st=>{
-grid.appendChild(stamCell(st.name))
+let stamEl = stamCell(st.name)
+
+// hämta dagens info
+let today = getTodayInfo()
+
+// kolla om denna stam har "Överlämning" denna vecka
+let isHandover = false
+
+st.cells.forEach((val,i)=>{
+if(val.includes("Överlämning") &&
+   data.weeks[i] === today.week &&
+   getWeekYear(i) === today.year){
+   isHandover = true
+}
+})
+
+// om ja → gör den blinkande
+if(isHandover){
+stamEl.classList.add("blink")
+}
+
+// lägg in i grid
+grid.appendChild(stamEl)
 st.cells.forEach((val,i)=>{
 let c=cell("")
 if(val!=""){let id=tasks.length;tasks.push({week:i,label:val});let status=getStatus(i,id);c.innerHTML=`<div class="task ${status}" onclick="openPopup(${id})">${val}</div>`}
