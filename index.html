@@ -113,6 +113,8 @@ to{transform:translateX(400%);}
 .today-label{
 position:fixed;
 top:80px;              /* justera höjd här */
+left:50%;
+transform:translateX(-50%);
 background:red;
 color:white;
 font-size:12px;
@@ -313,12 +315,6 @@ let workday = Math.max(Math.min(((today.day+6)%7),4) - 1, 0)
 let x = 260 + (idx + workday/5) * 110
 
 document.getElementById("today").style.left=x+"px"
-
-let label = document.querySelector(".today-label")
-
-if(label){
-label.style.left = (x - wrap.scrollLeft) + "px"
-}  
 
 /* auto scroll */
 
