@@ -204,7 +204,7 @@ date.setUTCDate(date.getUTCDate() + 4 - dayNum)
 
 let yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1))
 
-let week = Math.ceil((((date - yearStart) / 86400000) + 1) / 7) - 1
+let week = Math.ceil((((date - yearStart) / 86400000) + 1) / 7)
 
 let day = now.getDay()
 
@@ -240,7 +240,7 @@ return w===today.week && getWeekYear(i)===today.year
 
 if(idx<0)return
 
-let workday = Math.min(((today.day+6)%7),4)
+let workday = Math.max(Math.min(((today.day+6)%7),4) - 1, 0)
 let x = 260 + (idx + workday/5) * 110
 
 document.getElementById("today").style.left=x+"px"
@@ -257,7 +257,7 @@ return w===today.week && getWeekYear(i)===today.year
 });if(idx<0)return;let x=(idx)*110;wrap.scrollLeft=x-window.innerWidth/2}
 function drawProgress(){let svg=document.getElementById("progress");svg.innerHTML="";let today=getTodayInfo();let idx = data.weeks.findIndex((w,i)=>{
 return w===today.week && getWeekYear(i)===today.year
-});let workday = Math.min(((today.day+6)%7),4)
+});let workday = Math.max(Math.min(((today.day+6)%7),4) - 1, 0)
 let x = 200 + (idx + workday/5) * 110;let path="M"+x+" 0 ";tasks.forEach((t,i)=>{let y=160+i*44;path+="L"+x+" "+y+" ";if(delays[i]){let back=180;path+="L"+(x-back)+" "+(y+6)+" ";path+="L"+(x-back)+" "+(y+55)+" ";path+="L"+x+" "+(y+44)+" "}});let p=document.createElementNS("http://www.w3.org/2000/svg","path");p.setAttribute("d",path);p.setAttribute("stroke","red");p.setAttribute("fill","none");p.setAttribute("stroke-width","3");svg.appendChild(p)}
 function centerOnToday(){
 
@@ -268,7 +268,7 @@ return w===today.week && getWeekYear(i)===today.year
 
 if(idx<0) return
 
-let workday = Math.min(((today.day+6)%7),4)
+let workday = Math.max(Math.min(((today.day+6)%7),4) - 1, 0)
 let x = 260 + (idx + workday/5) * 110
 
 let wrap=document.getElementById("wrap")
