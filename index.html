@@ -147,13 +147,6 @@ border-radius:4px;
 font-weight:700;
 white-space:nowrap;
 }
-
-.task small{
-font-size:10px;
-display:block;
-margin-top:2px;
-opacity:0.9;
-}
   
 </style>
 </head>
@@ -181,9 +174,6 @@ opacity:0.9;
 <br>
 <label>Försenad</label>
 <select id="delay">
-<br><br>
-<label>Vilken Aktivitet</label>
-<input type="text" id="delayText" placeholder="Skriv aktivitet här">  
 <option value="0">0 dagar</option>
 <option value="1">1 dag</option>
 <option value="2">2 dagar</option>
@@ -200,7 +190,6 @@ const data = {"weeks": [33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 
 const holidayWeeks=[52,1,2,28,29,30,31,53]
 let tasks=[]
 let delays={}
-let delayTextData={}  
 let selected=null
 function build(){
 
@@ -235,9 +224,7 @@ sec.stams.forEach(st=>{
 grid.appendChild(stamCell(st.name))
 st.cells.forEach((val,i)=>{
 let c=cell("")
-if(val!=""){let id=tasks.length;tasks.push({week:i,label:val});let status=getStatus(i,id);let extra = delayTextData[id] ? "<br><small>" + delayTextData[id] + "</small>" : ""
-
-c.innerHTML=`<div class="task ${status}" onclick="openPopup(${id})">${val}${extra}</div>`
+if(val!=""){let id=tasks.length;tasks.push({week:i,label:val});let status=getStatus(i,id);c.innerHTML=`<div class="task ${status}" onclick="openPopup(${id})">${val}</div>`}
 if(holidayWeeks.includes(data.weeks[i]))c.classList.add("holiday")
 grid.appendChild(c)
 })
@@ -414,15 +401,12 @@ function openPopup(i){selected=i;let p=document.getElementById("popup");p.style.
 function closePopup(){document.getElementById("popup").style.display="none"}
 function saveDelay(){
 
-let d = parseInt(document.getElementById("delay").value)
-let txt = document.getElementById("delayText").value
+let d=parseInt(document.getElementById("delay").value)
 
-if(d > 0){
-delays[selected] = d
-delayTextData[selected] = txt
+if(d>0){
+delays[selected]=d
 }else{
 delete delays[selected]
-delete delayTextData[selected]
 }
 
 closePopup()
